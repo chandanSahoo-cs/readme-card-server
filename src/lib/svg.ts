@@ -248,13 +248,13 @@ const profileSVG = async () => {
         .dot-red { fill: #ff5f56; }
         .dot-yellow { fill: #ffbd2e; }
         .dot-green { fill: #27c93f; }
-        .prompt { fill: #7c3aed; font-family: 'Fira Code', monospace; font-size: 18px; }
-        .command { fill: #22d3ee; font-family: 'Fira Code', monospace; font-size: 18px; }
-        .text { fill: #e6edf3; font-family: 'Fira Code', monospace; font-size: 18px; }
-        .link {fill: #3a7be5; font-family: 'Fira Code', monospace; font-size: 18px; }
-        .accent { fill: #f97316; font-family: 'Fira Code', monospace; font-size: 18px; }
-        .success { fill: #22c55e; font-family: 'Fira Code', monospace; font-size: 18px; }
-        .info { fill: #3b82f6; font-family: 'Fira Code', monospace; font-size: 18px; }
+        .prompt { fill: #7c3aed; font-family: 'Fira Code', monospace; font-size: 14px; }
+        .command { fill: #22d3ee; font-family: 'Fira Code', monospace; font-size: 14px; }
+        .text { fill: #e6edf3; font-family: 'Fira Code', monospace; font-size: 14px; }
+        .link {fill: #3a7be5; font-family: 'Fira Code', monospace; font-size: 14px; }
+        .accent { fill: #f97316; font-family: 'Fira Code', monospace; font-size: 14px; }
+        .success { fill: #22c55e; font-family: 'Fira Code', monospace; font-size: 14px; }
+        .info { fill: #3b82f6; font-family: 'Fira Code', monospace; font-size: 14px; }
       </style>
     </defs>
     <!-- Header bar -->
