@@ -248,13 +248,13 @@ const profileSVG = async () => {
         .dot-red { fill: #ff5f56; }
         .dot-yellow { fill: #ffbd2e; }
         .dot-green { fill: #27c93f; }
-        .prompt { fill: #7c3aed; font-family: 'Fira Code', monospace; font-size: 14px; }
-        .command { fill: #22d3ee; font-family: 'Fira Code', monospace; font-size: 14px; }
-        .text { fill: #e6edf3; font-family: 'Fira Code', monospace; font-size: 14px; }
-        .link {fill: #3a7be5; font-family: 'Fira Code', monospace; font-size: 14px; }
-        .accent { fill: #f97316; font-family: 'Fira Code', monospace; font-size: 14px; }
-        .success { fill: #22c55e; font-family: 'Fira Code', monospace; font-size: 14px; }
-        .info { fill: #3b82f6; font-family: 'Fira Code', monospace; font-size: 14px; }
+        .prompt { fill: #7c3aed; font-family: 'Fira Code', monospace; font-size: 18px; }
+        .command { fill: #22d3ee; font-family: 'Fira Code', monospace; font-size: 18px; }
+        .text { fill: #e6edf3; font-family: 'Fira Code', monospace; font-size: 18px; }
+        .link {fill: #3a7be5; font-family: 'Fira Code', monospace; font-size: 18px; }
+        .accent { fill: #f97316; font-family: 'Fira Code', monospace; font-size: 18px; }
+        .success { fill: #22c55e; font-family: 'Fira Code', monospace; font-size: 18px; }
+        .info { fill: #3b82f6; font-family: 'Fira Code', monospace; font-size: 18px; }
       </style>
     </defs>
     <!-- Header bar -->
@@ -269,145 +269,146 @@ const profileSVG = async () => {
       <text x="20" y="60" class="prompt">$ git connect ${
         data.github.blog || data.github.html_url
       }</text>
-      <text x="20" y="80" class="success">✓ Connection established</text>
+      <text x="20" y="85" class="success">✓ Connection established</text>
       <!-- Terminal Background -->
   
   
     
     <!-- neofetch -->
-    <text x="20" y="110" class="prompt">┌──(</text>
-    <text x="60" y="110" class="success">dev</text>
-    <text x="85" y="110" class="prompt">㉿</text>
-    <text x="105" y="110" class="info">github</text>
-    <text x="160" y="110" class="prompt"> )-[</text>
-    <text x="190" y="110" class="accent">~</text>
-    <text x="200" y="110" class="prompt">]</text>
-    <text x="20" y="130" class="prompt">└─</text>
-    <text x="45" y="130" class="command">$ git log --whoami</text>
+    <text x="20" y="125" class="prompt">┌──(</text>
+    <text x="65" y="125" class="success">dev</text>
+    <text x="105" y="125" class="prompt">㉿</text>
+    <text x="130" y="125" class="info">github</text>
+    <text x="197" y="125" class="prompt"> )-[</text>
+    <text x="230" y="125" class="accent">~</text>
+    <text x="240" y="125" class="prompt">]</text>
+    <text x="20" y="145" class="prompt">└─</text>
+    <text x="50" y="145" class="command">$ git log --whoami</text>
     
     <!-- Neofetch Header -->
-    <text x="180" y="150" class="success" font-size="18" font-weight="bold">${USERNAME}</text>
-    <text x="180" y="165" class="accent">@${USERNAME}</text>
+    <text x="180" y="170" class="success" font-size="18" font-weight="bold">${USERNAME}</text>
+    <text x="180" y="190" class="accent">@${USERNAME}</text>
     
     <!-- Profile Picture (ASCII Art Style) -->
-    <rect x="20" y="185" width="120" height="120" rx="60" fill="#30363d" stroke="#58a6ff" stroke-width="2"/>
-    <image x="25" y="190" width="110" height="110" href="${userAvatar}" clip-path="circle(55px at 55px 55px)"/>
+    <rect x="20" y="210" width="120" height="120" rx="60" fill="#30363d" stroke="#58a6ff" stroke-width="2"/>
+    <image x="25" y="215" width="110" height="110" href="${userAvatar}" clip-path="circle(55px at 55px 55px)"/>
   
     <!-- Stats Section -->
-    <text x="180" y="195" class="info">OS</text>
-    <text x="300" y="195" class="text">Arch Linux</text>
+    <text x="180" y="215" class="info">OS</text>
+    <text x="340" y="215" class="text">Arch Linux</text>
   
-    <text x="180" y="215" class="info">Host</text>
-    <text x="300" y="215" class="text">${"Delhi, India"}</text>
+    <text x="180" y="235" class="info">Host</text>
+    <text x="340" y="235" class="text">${"Delhi, India"}</text>
   
-    <text x="180" y="235" class="info">Uptime</text>
-    <text x="300" y="235" class="text">${age}</text>
+    <text x="180" y="255" class="info">Uptime</text>
+    <text x="340" y="255" class="text">${age}</text>
   
-    <text x="180" y="255" class="info">Public Repos</text>
-    <text x="300" y="255" class="text">${data.github.public_repos} repos</text>
+    <text x="180" y="275" class="info">Public Repos</text>
+    <text x="340" y="275" class="text">${data.github.public_repos} repos</text>
   
-    <text x="180" y="275" class="info">Languages</text>
-    <text x="300" y="275" class="text">${languages.join(" • ")}</text>
+    <text x="180" y="295" class="info">Languages</text>
+    <text x="340" y="295" class="text">${languages.join(" • ")}</text>
   
-    <text x="180" y="295" class="info">Stars</text>
-    <text x="300" y="295" class="text">${stars} stars</text>
+    <text x="180" y="315" class="info">Stars</text>
+    <text x="340" y="315" class="text">${stars} stars</text>
     
-    <text x="180" y="315" class="info">Followers</text>
-    <text x="300" y="315" class="text">${data.github.followers} followers</text>
+    <text x="180" y="335" class="info">Followers</text>
+    <text x="340" y="335" class="text">${data.github.followers} followers</text>
     
-    <text x="180" y="335" class="info">Last Commit</text>
-    <text x="300" y="335" class="text">${lastCommitDate}</text>
+    <text x="180" y="355" class="info">Last Commit</text>
+    <text x="340" y="355" class="text">${lastCommitDate}</text>
   
     <!-- Color Palette -->
-    <text x="30" y="370" class="text">Colors:</text>
-    <rect x="30" y="380" width="20" height="20" fill="#ff5f56"/>
-    <rect x="55" y="380" width="20" height="20" fill="#ffbd2e"/>
-    <rect x="80" y="380" width="20" height="20" fill="#27c93f"/>
-    <rect x="105" y="380" width="20" height="20" fill="#3b82f6"/>
-    <rect x="130" y="380" width="20" height="20" fill="#7c3aed"/>
-    <rect x="155" y="380" width="20" height="20" fill="#f97316"/>
-    <rect x="180" y="380" width="20" height="20" fill="#22c55e"/>
-    <rect x="205" y="380" width="20" height="20" fill="#22d3ee"/>
+    <text x="30" y="385" class="text">Colors:</text>
+    <rect x="30" y="395" width="20" height="20" fill="#ff5f56"/>
+    <rect x="55" y="395" width="20" height="20" fill="#ffbd2e"/>
+    <rect x="80" y="395" width="20" height="20" fill="#27c93f"/>
+    <rect x="105" y="395" width="20" height="20" fill="#3b82f6"/>
+    <rect x="130" y="395" width="20" height="20" fill="#7c3aed"/>
+    <rect x="155" y="395" width="20" height="20" fill="#f97316"/>
+    <rect x="180" y="395" width="20" height="20" fill="#22c55e"/>
+    <rect x="205" y="395" width="20" height="20" fill="#22d3ee"/>
     
     <!-- stack -->
-    <text x="20" y="450" class="prompt">┌──(</text>
-    <text x="60" y="450" class="success">dev</text>
-    <text x="85" y="450" class="prompt">㉿</text>
-    <text x="105" y="450" class="info">github</text>
-    <text x="160" y="450" class="prompt"> )-[</text>
-    <text x="190" y="450" class="accent">~</text>
-    <text x="200" y="450" class="prompt">]</text>
-    <text x="20" y="470" class="prompt">└─</text>
-    <text x="45" y="470" class="command">$ git log --stack --oneline</text>
+    <text x="20" y="455" class="prompt">┌──(</text>
+    <text x="65" y="455" class="success">dev</text>
+    <text x="105" y="455" class="prompt">㉿</text>
+    <text x="130" y="455" class="info">github</text>
+    <text x="197" y="455" class="prompt"> )-[</text>
+    <text x="230" y="455" class="accent">~</text>
+    <text x="240" y="455" class="prompt">]</text>
+    <text x="20" y="475" class="prompt">└─</text>
+    <text x="50" y="475" class="command">$ git log --stack --oneline</text>
     
     <!-- Stack Section -->
-    <text x="20" y="490" class="text">Stack (used so far): ${stack.join(
+    <text x="20" y="500" class="text">Stack (used so far): ${stack.join(
       " • "
     )}</text>  
+
     <!-- profiles -->
     <text x="20" y="540" class="prompt">┌──(</text>
-    <text x="60" y="540" class="success">dev</text>
-    <text x="85" y="540" class="prompt">㉿</text>
-    <text x="105" y="540" class="info">github</text>
-    <text x="160" y="540" class="prompt"> )-[</text>
-    <text x="190" y="540" class="accent">~</text>
-    <text x="200" y="540" class="prompt">]</text>
+    <text x="65" y="540" class="success">dev</text>
+    <text x="105" y="540" class="prompt">㉿</text>
+    <text x="130" y="540" class="info">github</text>
+    <text x="197" y="540" class="prompt"> )-[</text>
+    <text x="230" y="540" class="accent">~</text>
+    <text x="240" y="540" class="prompt">]</text>
     <text x="20" y="560" class="prompt">└─</text>
-    <text x="45" y="560" class="command">$ git log --profiles</text>
+    <text x="50" y="560" class="command">$ git log --profiles</text>
     
     <!-- Profile Section -->
-    <text x="20" y="580" class="text">Codeforces</text>
+    <text x="20" y="585" class="text">Codeforces</text>
     <a href="https://codeforces.com/profile/Realmchan" target="_blank" rel="noopener noreferrer">
-    <text x="120" y="580" class="text">Realmchan | ${codeforcesRating} | ${codeforcesRank} </text>
+    <text x="160" y="585" class="text">Realmchan | ${codeforcesRating} | ${codeforcesRank} </text>
     </a>
-    <text x="20" y="600" class="text" >CodeChef</text>
+    <text x="20" y="605" class="text" >CodeChef</text>
     <a href="https://www.codechef.com/users/realm" target="_blank" rel="noopener noreferrer">
-    <text x="120" y="600" class="text">Realm | ${codechefRating} | ${codechefRank} </text>
+    <text x="160" y="605" class="text">Realm | ${codechefRating} | ${codechefRank} </text>
     </a>
-    <text x="20" y="620" class="text">Leetcode</text>
+    <text x="20" y="625" class="text">Leetcode</text>
     <a href="https://leetcode.com/realmchan" target="_blank" rel="noopener noreferrer">
-    <text x="120" y="620" class="text">Realmchan | ${leetcodeRating} </text>
+    <text x="160" y="625" class="text">Realmchan | ${leetcodeRating} </text>
     </a>
     
     <!-- connect -->
-    <text x="20" y="670" class="prompt">┌──(</text>
-    <text x="60" y="670" class="success">dev</text>
-    <text x="85" y="670" class="prompt">㉿</text>
-    <text x="105" y="670" class="info">github</text>
-    <text x="160" y="670" class="prompt"> )-[</text>
-    <text x="190" y="670" class="accent">~</text>
-    <text x="200" y="670" class="prompt">]</text>
-    <text x="20" y="690" class="prompt">└─</text>
-    <text x="45" y="690" class="command">$ git ping -c1 chandansahoo.dev</text>
+    <text x="20" y="665" class="prompt">┌──(</text>
+    <text x="65" y="665" class="success">dev</text>
+    <text x="105" y="665" class="prompt">㉿</text>
+    <text x="130" y="665" class="info">github</text>
+    <text x="197" y="665" class="prompt"> )-[</text>
+    <text x="230" y="665" class="accent">~</text>
+    <text x="240" y="665" class="prompt">]</text>
+    <text x="20" y="685" class="prompt">└─</text>
+    <text x="50" y="685" class="command">$ git ping -c1 chandansahoo.dev</text>
   
     <!-- Connect Section -->
-    <text x="20" y="710" class="text">Email</text>
+    <text x="20" y="715" class="text">Email</text>
     <a href="mailto:chandansahoo02468@gmail.com" target="_blank" rel="noopener noreferrer">
-    <text x="120" y="710" class="text">chandansahoo02468@gmail.com</text>
+    <text x="160" y="715" class="text">chandansahoo02468@gmail.com</text>
     </a>
-    <text x="20" y="730" class="text" >LinkedIn</text>
+    <text x="20" y="735" class="text" >LinkedIn</text>
     <a href="https://linkedin.com/in/chandansahoo-cs" target="_blank" rel="noopener noreferrer">
-    <text x="120" y="730" class="text">chandansahoo-cs</text>
+    <text x="160" y="735" class="text">chandansahoo-cs</text>
     </a>
-    <text x="20" y="750" class="text">Github</text>
+    <text x="20" y="755" class="text">Github</text>
     <a href="https://github.com/chandanSahoo-cs" target="_blank" rel="noopener noreferrer">
-    <text x="120" y="750" class="text">chandanSahoo-cs</text>
+    <text x="160" y="755" class="text">chandanSahoo-cs</text>
     </a>
-    <text x="20" y="770" class="text">Discord</text>
+    <text x="20" y="775" class="text">Discord</text>
     <a href="https://discord.com/users/chandansahoo" target="_blank" rel="noopener noreferrer">
-    <text x="120" y="770" class="text">chandansahoo</text>
+    <text x="160" y="775" class="text">chandansahoo</text>
     </a>
 
     <!-- switch -->
-    <text x="20" y="820" class="prompt">┌──(</text>
-    <text x="60" y="820" class="success">dev</text>
-    <text x="85" y="820" class="prompt">㉿</text>
-    <text x="105" y="820" class="info">github</text>
-    <text x="160" y="820" class="prompt"> )-[</text>
-    <text x="190" y="820" class="accent">~</text>
-    <text x="200" y="820" class="prompt">]</text>
-    <text x="20" y="840" class="prompt">└─</text>
-    <text x="45" y="840" class="command">$ gh-shell switch --keep-history</text>
+    <text x="20" y="815" class="prompt">┌──(</text>
+    <text x="65" y="815" class="success">dev</text>
+    <text x="105" y="815" class="prompt">㉿</text>
+    <text x="130" y="815" class="info">github</text>
+    <text x="197" y="815" class="prompt"> )-[</text>
+    <text x="230" y="815" class="accent">~</text>
+    <text x="240" y="815" class="prompt">]</text>
+    <text x="20" y="835" class="prompt">└─</text>
+    <text x="50" y="835" class="command">$ gh-shell switch --keep-history</text>
 
     <text x="20" y="860" class="text">Switching</text>
     <text x="20" y="880" class="text">Migrating history... done</text>
