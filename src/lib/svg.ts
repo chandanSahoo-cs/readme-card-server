@@ -122,7 +122,16 @@ const fetchedData = async (): Promise<UserProfile | null> => {
     );
 
     const lastCommitDate = repos[0]?.updated_at
-      ? new Date(repos[0].updated_at).toLocaleString()
+      ? new Date(repos[0].updated_at).toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false, // change to true if you want AM/PM
+          timeZone: "Asia/Kolkata",
+        })
       : "N/A";
 
     const languages = repos
