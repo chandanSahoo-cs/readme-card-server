@@ -58,6 +58,14 @@ app.get("/health", async (_req, res) => {
   });
 });
 
+app.get("/", async (_req, res) => {
+  res.status(200).json({
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: Date.now(),
+  });
+});
+
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
