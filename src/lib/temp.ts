@@ -1,111 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import sharp from "sharp";
 
-const GH_TOKEN = process.env.GH_TOKEN; // set in Vercel project settings
-const headers = {
-  Authorization: `Bearer ${GH_TOKEN}`,
-  "User-Agent": "chandanSahoo-cs-card", // required by GitHub API
-};
+// import { base64image } from "../constants";
 
+// Config
+const GH_TOKEN = process.env.GH_TOKEN;
 const USERNAME = "chandanSahoo-cs";
 
-const fallbackSVG = `
-<svg width="500" height="170" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#161b22"/>
-      <stop offset="100%" stop-color="#21262d"/>
-    </linearGradient>
+const headers = {
+  Authorization: `Bearer ${GH_TOKEN}`,
+  "User-Agent": "chandanSahoo-cs-card",
+};
 
-    <style>
-      .terminal-bg { fill:#0d1117; }
-      .header-bg { fill:url(#headerGrad); }
-      .panel { fill:#161b22; stroke:#30363d; stroke-width:1; }
-
-      .dot-red { fill:#ff5f56; }
-      .dot-yellow { fill:#ffbd2e; }
-      .dot-green { fill:#27c93f; }
-
-      .prompt {
-        fill:#a855f7;
-        font:13px 'Fira Code', monospace;
-      }
-
-      .command {
-        fill:#22d3ee;
-        font:13px 'Fira Code', monospace;
-      }
-
-      .text {
-        fill:#c9d1d9;
-        font:13px 'Fira Code', monospace;
-      }
-
-      .success {
-        fill:#3fb950;
-        font:13px 'Fira Code', monospace;
-      }
-
-      .link {
-        fill:#58a6ff;
-        font:13px 'Fira Code', monospace;
-      }
-
-      .label {
-        fill:#7d8590;
-        font:12px 'Fira Code', monospace;
-      }
-    </style>
-  </defs>
-
-  <!-- Window -->
-  <rect width="500" height="170" rx="10" class="terminal-bg"/>
-  <rect width="500" height="34" rx="10" class="header-bg"/>
-  <rect y="16" width="500" height="18" class="header-bg"/>
-
-  <!-- Traffic lights -->
-  <circle cx="20" cy="17" r="6" class="dot-red"/>
-  <circle cx="40" cy="17" r="6" class="dot-yellow"/>
-  <circle cx="60" cy="17" r="6" class="dot-green"/>
-
-  <text x="250" y="22" text-anchor="middle" class="label">
-    github-readme: ~
-  </text>
-
-  <!-- Command -->
-  <text x="20" y="58" class="prompt">
-    $ <tspan class="command">git connect</tspan>
-    <tspan class="link">https://github.com/chandanSahoo-cs</tspan>
-  </text>
-
-  <!-- Output panel -->
-  <rect x="20" y="74" width="460" height="74" rx="8" class="panel"/>
-
-  <text x="36" y="100" class="text">
-    Failed to establish connection.
-  </text>
-
-  <text x="36" y="122" class="text">
-    The GitHub API is temporarily unavailable.
-  </text>
-
-  <text x="36" y="142" class="success">
-    ↻ Please reload the page in a few seconds.
-  </text>
-
-  <!-- Border -->
-  <rect
-    x="1"
-    y="1"
-    width="498"
-    height="168"
-    rx="10"
-    fill="none"
-    stroke="#30363d"
-    stroke-width="2"
-  />
-</svg>
-`;
 interface UserProfile {
   user: {
     age: string | null;
@@ -136,6 +41,8 @@ interface UserProfile {
   };
 }
 
+// Utility Functions
+
 const getCompressedBase64Avatar = async (
   avatar_url: string
 ): Promise<string> => {
@@ -145,13 +52,8 @@ const getCompressedBase64Avatar = async (
       throw new Error(`Failed to fetch image: ${response.statusText}`);
     }
 
-    const buffer = await response.arrayBuffer();
-
-    const compressedBuffer = await sharp(Buffer.from(buffer))
-      .jpeg({ quality: 70 })
-      .toBuffer();
-
-    const base64 = compressedBuffer.toString("base64");
+    const arrayBuffer = await response.arrayBuffer();
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
 
     return `data:image/jpeg;base64,${base64}`;
   } catch (error) {
@@ -179,38 +81,64 @@ const getCurrentAge = (): string => {
   return age;
 };
 
+// Escapes text that gets interpolated into the SVG so stray "&", "<", ">"
+// in bios/usernames/etc. can't break the markup.
+const escapeXml = (value: string | number): string =>
+  String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
+// Joins a list with a separator, truncating with a "+N more" suffix so a
+// long language/stack list can't overflow the card width.
+const joinTruncated = (
+  items: string[],
+  max: number,
+  sep = " • "
+): string => {
+  if (items.length <= max) return items.map(escapeXml).join(sep);
+  const shown = items.slice(0, max).map(escapeXml).join(sep);
+  return `${shown} +${items.length - max} more`;
+};
+
+// Data fetch
 const fetchedData = async (): Promise<UserProfile | null> => {
   try {
-    const userRes = await fetch(`https://api.github.com/users/${USERNAME}`, {
-      headers,
-    });
-    const user = await userRes.json();
+    const [userRes, repoRes, codeforces, codechef, leetcode] =
+      await Promise.all([
+        fetch(`https://api.github.com/users/${USERNAME}`, {
+          headers,
+        }),
+        fetch(
+          `https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=pushed&direction=des`,
+          {
+            headers,
+          }
+        ),
+        fetch("https://competeapi.vercel.app/user/codeforces/realmchan/"),
+        fetch("https://competeapi.vercel.app/user/codechef/realm/"),
+        fetch("https://competeapi.vercel.app/user/leetcode/realmchan/"),
+      ]);
+
+    const [user, repos, codeforcesDetails, codechefDetails, leetcodeDetails] =
+      await Promise.all([
+        userRes.json(),
+        repoRes.json(),
+        codeforces.json(),
+        codechef.json(),
+        leetcode.json(),
+      ]);
+
     const userAvatar = await getCompressedBase64Avatar(user.avatar_url);
 
-    // fetch repos to count stars
-    const repoRes = await fetch(
-      `https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=pushed&direction=des`,
-      {
-        headers,
-      }
-    );
-    const repos = await repoRes.json();
     const stars = repos.reduce(
       (sum: number, r: any) => sum + (r.stargazers_count || 0),
       0
     );
 
     const lastCommitDate = repos[0]?.updated_at
-      ? new Date(repos[0].updated_at).toLocaleDateString("en-IN", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: false, // change to true if you want AM/PM
-          timeZone: "Asia/Kolkata",
-        })
+      ? new Date(repos[0].updated_at).toLocaleString()
       : "N/A";
 
     const languages = repos
@@ -228,25 +156,13 @@ const fetchedData = async (): Promise<UserProfile | null> => {
     const age = getCurrentAge();
 
     // Rank and Rating
-    const codeforces = await fetch(
-      "https://competeapi.vercel.app/user/codeforces/realmchan/"
-    );
-    const codeforcesDetails = await codeforces.json();
     const codeforcesRating = await codeforcesDetails[0].rating;
     const codeforcesRank = await codeforcesDetails[0].rank.toUpperCase();
 
-    const codechef = await fetch(
-      "https://competeapi.vercel.app/user/codechef/realm/"
-    );
-    const codechefDetails = await codechef.json();
     const codechefRating = await codechefDetails.rating_number;
     const codechefRank =
       (await codechefDetails.rating.toUpperCase()[0]) + " STAR";
 
-    const leetcode = await fetch(
-      "https://competeapi.vercel.app/user/leetcode/realmchan/"
-    );
-    const leetcodeDetails = await leetcode.json();
     const leetcodeRating = Math.floor(
       leetcodeDetails.data.userContestRanking.rating
     );
@@ -301,10 +217,38 @@ const fetchedData = async (): Promise<UserProfile | null> => {
   }
 };
 
+// ---- SVG layout helpers -----------------------------------------------
+
+const CARD_WIDTH = 1200;
+
+// Renders a "$ <command>" terminal prompt line at the given y position.
+const promptLine = (y: number, cmd: string): string => `
+    <text x="24" y="${y}" class="prompt">$ <tspan class="command">${escapeXml(
+  cmd
+)}</tspan></text>`;
+
+// Renders a rounded panel background.
+const panel = (y: number, height: number): string => `
+    <rect x="24" y="${y}" width="${
+  CARD_WIDTH - 48
+}" height="${height}" rx="8" class="panel"/>`;
+
+// Renders a "label ... value" row inside a panel.
+const statRow = (
+  x: number,
+  y: number,
+  label: string,
+  value: string | number,
+  valueClass = "text"
+): string => `
+    <text x="${x}" y="${y}" class="label">${escapeXml(label)}</text>
+    <text x="${x + 130}" y="${y}" class="${valueClass}">${escapeXml(
+  value
+)}</text>`;
+
 const profileSVG = async () => {
   try {
     const data = await fetchedData();
-    console.log(data);
     if (!data) {
       throw new Error("Not able to fetch user detail");
     }
@@ -318,16 +262,20 @@ const profileSVG = async () => {
 
     // Rank and Rating
     const codeforcesRating =
-      data.competitivePlatform.codeforces.codeforcesRating;
-    const codeforcesRank = data.competitivePlatform.codeforces.codeforcesRank;
+      data.competitivePlatform.codeforces.codeforcesRating ?? "N/A";
+    const codeforcesRank =
+      data.competitivePlatform.codeforces.codeforcesRank ?? "N/A";
 
-    const codechefRating = data.competitivePlatform.codechef.codechefRating;
-    const codechefRank = data.competitivePlatform.codechef.codechefRank;
+    const codechefRating =
+      data.competitivePlatform.codechef.codechefRating ?? "N/A";
+    const codechefRank =
+      data.competitivePlatform.codechef.codechefRank ?? "N/A";
 
-    const leetcodeRating = data.competitivePlatform.leetcode.leetcodeRating;
+    const leetcodeRating =
+      data.competitivePlatform.leetcode.leetcodeRating ?? "N/A";
 
     const svg = `
-  <svg width="1200" height="880" xmlns="http://www.w3.org/2000/svg">
+  <svg width="${CARD_WIDTH}" height="880" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0%" stop-color="#161b22"/>
@@ -353,42 +301,37 @@ const profileSVG = async () => {
       </style>
     </defs>
 
+    <!-- Window chrome -->
     <rect width="100%" height="100%" rx="10" class="terminal-bg"/>
     <rect width="100%" height="34" rx="10" class="header-bg"/>
     <rect y="16" width="100%" height="18" class="header-bg"/>
     <circle cx="20" cy="17" r="6" class="dot-red"/>
     <circle cx="40" cy="17" r="6" class="dot-yellow"/>
     <circle cx="60" cy="17" r="6" class="dot-green"/>
-    <text x="600" y="22" class="label" text-anchor="middle">${USERNAME}@github: ~</text>
+    <text x="600" y="22" class="label" text-anchor="middle">${escapeXml(
+      USERNAME
+    )}@github: ~</text>
 
-    <text x="24" y="56" class="prompt">$ <tspan class="command">git connect</tspan> ${
-      data.github.blog || data.github.html_url
-    }</text>
+    ${promptLine(56, `git connect ${data.github.blog || data.github.html_url}`)}
     <text x="24" y="74" class="success">✓ connection established</text>
 
     <!-- Profile panel -->
-    <rect x="24" y="92" width="1152" height="248" rx="8" class="panel"/>
+    ${panel(92, 248)}
     <circle cx="112" cy="196" r="64" fill="#21262d" stroke="#58a6ff" stroke-width="2"/>
     <image x="52" y="136" width="120" height="120" href="${userAvatar}" clip-path="circle(60px at 60px 60px)"/>
 
-    <text x="220" y="130" class="titleText">${USERNAME}</text>
-    <text x="220" y="150" class="subTitle">@${USERNAME}</text>
+    <text x="220" y="130" class="titleText">${escapeXml(USERNAME)}</text>
+    <text x="220" y="150" class="subTitle">@${escapeXml(USERNAME)}</text>
 
-    <text x="220" y="184" class="label">OS</text>
-    <text x="360" y="184" class="text">Arch Linux</text>
-    <text x="220" y="208" class="label">Host</text>
-    <text x="360" y="208" class="text">Delhi, India</text>
-    <text x="220" y="232" class="label">Uptime</text>
-    <text x="360" y="232" class="text">${age}</text>
-    <text x="220" y="256" class="label">Public Repos</text>
-    <text x="360" y="256" class="text">${data.github.public_repos} repos</text>
-    <text x="220" y="280" class="label">Stars</text>
-    <text x="360" y="280" class="text">${stars} stars</text>
+    ${statRow(220, 184, "OS", "Arch Linux")}
+    ${statRow(220, 208, "Host", "Delhi, India")}
+    ${statRow(220, 232, "Uptime", age ?? "N/A")}
+    ${statRow(220, 256, "Public Repos", `${data.github.public_repos} repos`)}
+    ${statRow(220, 280, "Stars", `${stars} stars`)}
 
-    <text x="650" y="184" class="label">Followers</text>
-    <text x="790" y="184" class="text">${data.github.followers} followers</text>
-    <text x="650" y="208" class="label">Last Commit</text>
-    <text x="790" y="208" class="text">${lastCommitDate}</text>
+    ${statRow(650, 184, "Followers", `${data.github.followers} followers`)}
+    ${statRow(650, 208, "Last Commit", lastCommitDate)}
+    ${statRow(650, 232, "Languages", joinTruncated(languages, 4))}
 
     <line x1="220" y1="300" x2="1140" y2="300" stroke="#30363d" stroke-width="1"/>
     <rect x="220" y="312" width="18" height="18" rx="3" fill="#ff5f56"/>
@@ -401,36 +344,36 @@ const profileSVG = async () => {
     <rect x="416" y="312" width="18" height="18" rx="3" fill="#22d3ee"/>
 
     <!-- Stack panel -->
-    <text x="24" y="372" class="prompt">$ <tspan class="command">git log --stack --oneline</tspan></text>
-    <rect x="24" y="386" width="1152" height="50" rx="8" class="panel"/>
-    <text x="40" y="416" class="text">${stack.join(" • ")}</text>
+    ${promptLine(372, "git log --stack --oneline")}
+    ${panel(386, 50)}
+    <text x="40" y="416" class="text">${joinTruncated(stack, stack.length)}</text>
 
-    <!-- Profiles panel -->
-    <text x="24" y="464" class="prompt">$ <tspan class="command">git log --profiles</tspan></text>
-    <rect x="24" y="478" width="1152" height="112" rx="8" class="panel"/>
+    <!-- Competitive profiles panel -->
+    ${promptLine(464, "git log --profiles")}
+    ${panel(478, 112)}
     <text x="40" y="510" class="label">Codeforces</text>
     <a href="https://codeforces.com/profile/Realmchan" target="_blank" rel="noopener noreferrer">
       <text x="180" y="510" class="text">Realmchan</text>
-      <text x="360" y="510" class="text">${codeforcesRating}</text>
-      <text x="440" y="510" class="accent">${codeforcesRank}</text>
+      <text x="360" y="510" class="text">${escapeXml(codeforcesRating)}</text>
+      <text x="440" y="510" class="accent">${escapeXml(codeforcesRank)}</text>
     </a>
 
     <text x="40" y="538" class="label">CodeChef</text>
     <a href="https://www.codechef.com/users/realm" target="_blank" rel="noopener noreferrer">
       <text x="180" y="538" class="text">realm</text>
-      <text x="360" y="538" class="text">${codechefRating}</text>
-      <text x="440" y="538" class="accent">${codechefRank}</text>
+      <text x="360" y="538" class="text">${escapeXml(codechefRating)}</text>
+      <text x="440" y="538" class="accent">${escapeXml(codechefRank)}</text>
     </a>
 
     <text x="40" y="566" class="label">LeetCode</text>
     <a href="https://leetcode.com/realmchan" target="_blank" rel="noopener noreferrer">
       <text x="180" y="566" class="text">realmchan</text>
-      <text x="360" y="566" class="text">${leetcodeRating}</text>
+      <text x="360" y="566" class="text">${escapeXml(leetcodeRating)}</text>
     </a>
 
     <!-- Connect panel -->
-    <text x="24" y="614" class="prompt">$ <tspan class="command">git ping -c1 chandansahoo.dev</tspan></text>
-    <rect x="24" y="628" width="1152" height="140" rx="8" class="panel"/>
+    ${promptLine(614, "git ping -c1 chandansahoo.dev")}
+    ${panel(628, 140)}
     <text x="40" y="660" class="label">Email</text>
     <a href="mailto:chandansahoo02468@gmail.com" target="_blank" rel="noopener noreferrer">
       <text x="180" y="660" class="link">chandansahoo02468@gmail.com</text>
@@ -448,20 +391,32 @@ const profileSVG = async () => {
       <text x="180" y="744" class="link">chandansahoo</text>
     </a>
 
-    <text x="24" y="800" class="prompt">$ <tspan class="command">gh-shell switch --keep-history</tspan></text>
+    ${promptLine(800, "gh-shell switch --keep-history")}
     <text x="24" y="822" class="text">Migrating history... done</text>
     <text x="24" y="842" class="text">Applying theme: github-readme ✓</text>
 
-    <rect x="0" y="0" width="1200" height="880" rx="10" fill="none" stroke="#30363d" stroke-width="2"/>
+    <rect x="0" y="0" width="${CARD_WIDTH}" height="880" rx="10" fill="none" stroke="#30363d" stroke-width="2"/>
   </svg>
     `;
     return svg;
   } catch (error) {
     console.error("Error :: ", error);
-    return fallbackSVG;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="500" height="120" style="background:#0d1117; font-family: monospace;">
+    <style>
+        .terminal-bg { fill: #0d1117; }
+        .prompt { fill: #a855f7; font-family: 'Fira Code', monospace; font-size: 14px; }
+        .text { fill: #ff5f56; font-family: 'Fira Code', monospace; font-size: 13px; }
+    </style>
+    <rect width="100%" height="100%" fill="#0d1117" />
+    <text x="20" y="40" class="prompt">$ git connect https://github.com/chandanSahoo-cs</text>
+    <text x="20" y="70" class="text">✗ ${escapeXml(String(error))}</text>
+    <text x="20" y="90" class="text" fill="#c9d1d9">Check out my projects until then :)</text>
+    </svg>
+    `;
+    return svg;
   }
 };
 
-export { type UserProfile, fetchedData, profileSVG, fallbackSVG };
+export { type UserProfile, fetchedData, profileSVG };
 
 /* eslint-enable @typescript-eslint/no-explicit-any */
