@@ -312,7 +312,7 @@ const fetchedData = async (): Promise<UserProfile> => {
 function renderTerminalCard(data: UserProfile, isOffline = false): string {
   const { user, github, competitivePlatform } = data;
 
-  return `<svg width="920" height="780" viewBox="0 0 920 780" fill="none" xmlns="http://www.w3.org/2000/svg">
+  return `<svg width="920" height="710" viewBox="0 0 920 710" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#161b22"/>
@@ -343,7 +343,7 @@ function renderTerminalCard(data: UserProfile, isOffline = false): string {
     </style>
   </defs>
   <!-- Terminal Window Background -->
-  <rect width="920" height="780" rx="10" class="terminal-bg window-border" />
+  <rect width="920" height="710" rx="10" class="terminal-bg window-border" />
   <!-- Terminal Header Bar -->
   <rect width="920" height="38" rx="10" class="header-bg" />
   <rect y="24" width="920" height="14" class="header-bg" />
@@ -363,7 +363,7 @@ function renderTerminalCard(data: UserProfile, isOffline = false): string {
   }
   <!-- Prompt Line 1: Fastfetch -->
   <text x="24" y="66" class="prompt">
-    $ <tspan class="command">fastfetch</tspan>
+    $ <tspan class="command">whoami --verbose</tspan>
   </text>
   <!-- Main Profile Info Panel -->
   <rect x="24" y="82" width="872" height="184" class="panel" />
@@ -446,27 +446,10 @@ function renderTerminalCard(data: UserProfile, isOffline = false): string {
   <a href="https://discord.com/users/chandansahoo" target="_blank">
     <text x="590" y="626" class="link">@chandansahoo</text>
   </a>
-  <!-- Prompt Line 5: Switch Command & Status Output -->
+  <!-- Prompt Line 5: Log links -->
   <text x="24" y="684" class="prompt">
-    $ <tspan class="command">gh-shell switch --keep-history</tspan>
+    $ <tspan class="command">git log --links</tspan>
   </text>
-  <text x="24" y="706" class="text">
-    Migrating history... done
-  </text>
-  <text x="24" y="726" class="text">
-    Applying theme: github-readme ✓
-  </text>
-  <!-- ANSI Color Swatches -->
-  <g transform="translate(660, 742)">
-    <rect x="0" width="11" height="11" rx="2" fill="#ff5f56" />
-    <rect x="16" width="11" height="11" rx="2" fill="#ffbd2e" />
-    <rect x="32" width="11" height="11" rx="2" fill="#27c93f" />
-    <rect x="48" width="11" height="11" rx="2" fill="#58a6ff" />
-    <rect x="64" width="11" height="11" rx="2" fill="#a855f7" />
-    <rect x="80" width="11" height="11" rx="2" fill="#f97316" />
-    <rect x="96" width="11" height="11" rx="2" fill="#3fb950" />
-    <rect x="112" width="11" height="11" rx="2" fill="#22d3ee" />
-  </g>
 </svg>
 `;
 }
