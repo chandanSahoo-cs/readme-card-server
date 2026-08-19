@@ -71,7 +71,7 @@ const staticProfileData: UserProfile = {
       "Git",
       "PostgreSQL",
       "MongoDB",
-      "ConvexDB"
+      "ConvexDB",
     ],
   },
   github: {
@@ -100,7 +100,7 @@ const staticProfileData: UserProfile = {
 };
 
 const getCompressedBase64Avatar = async (
-  avatar_url: string,
+  avatar_url: string
 ): Promise<string> => {
   try {
     const response = await fetch(avatar_url);
@@ -129,7 +129,7 @@ const fetchGitHubUser = async () => {
     if (!res.ok) throw new Error(`GitHub User API error: ${res.status}`);
     const user = await res.json();
     const avatar = await getCompressedBase64Avatar(
-      user.avatar_url || staticProfileData.github.userAvatar,
+      user.avatar_url || staticProfileData.github.userAvatar
     );
 
     return {
@@ -155,7 +155,7 @@ const fetchGitHubRepos = async () => {
   try {
     const res = await fetch(
       `https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=pushed&direction=desc`,
-      { headers },
+      { headers }
     );
     if (!res.ok) throw new Error(`GitHub Repos API error: ${res.status}`);
     const repos = await res.json();
@@ -165,13 +165,13 @@ const fetchGitHubRepos = async () => {
 
     const stars = repos.reduce(
       (sum: number, r: any) => sum + (r.stargazers_count || 0),
-      0,
+      0
     );
 
     const lastCommitDate =
       repos[0]?.pushed_at || repos[0]?.updated_at
         ? new Date(
-            repos[0].pushed_at || repos[0].updated_at,
+            repos[0].pushed_at || repos[0]?.updated_at
           ).toLocaleDateString("en-IN", {
             day: "2-digit",
             month: "short",
@@ -213,7 +213,7 @@ const fetchGitHubRepos = async () => {
 const fetchCodeforces = async () => {
   try {
     const res = await fetch(
-      "https://competeapi.vercel.app/user/codeforces/realmchan/",
+      "https://competeapi.vercel.app/user/codeforces/realmchan/"
     );
     if (!res.ok) throw new Error(`CF error: ${res.status}`);
     const data = await res.json();
@@ -234,7 +234,7 @@ const fetchCodeforces = async () => {
 const fetchCodeChef = async () => {
   try {
     const res = await fetch(
-      "https://competeapi.vercel.app/user/codechef/realm/",
+      "https://competeapi.vercel.app/user/codechef/realm/"
     );
     if (!res.ok) throw new Error(`CC error: ${res.status}`);
     const data = await res.json();
@@ -255,7 +255,7 @@ const fetchCodeChef = async () => {
 const fetchLeetCode = async () => {
   try {
     const res = await fetch(
-      "https://competeapi.vercel.app/user/leetcode/realmchan/",
+      "https://competeapi.vercel.app/user/leetcode/realmchan/"
     );
     if (!res.ok) throw new Error(`LC error: ${res.status}`);
     const data = await res.json();
@@ -322,11 +322,6 @@ function renderTerminalCard(data: UserProfile, isOffline = false): string {
       <rect x="48" y="128" width="112" height="112" rx="10" />
     </clipPath>
     <style>
-      @keyframes blink {
-        0%, 49% { opacity: 1; }
-        50%, 100% { opacity: 0; }
-      }
-      .cursor { animation: blink 1s infinite; fill: #22d3ee; }
       .terminal-bg { fill: #0d1117; }
       .header-bg { fill: url(#headerGrad); }
       .window-border { stroke: #30363d; stroke-width: 1.5; }
@@ -461,10 +456,6 @@ function renderTerminalCard(data: UserProfile, isOffline = false): string {
   <text x="24" y="726" class="text">
     Applying theme: github-readme ✓
   </text>
-  <!-- Final Active Terminal Cursor Line -->
-  <text x="24" y="752" class="prompt">
-    $ <tspan class="cursor">█</tspan>
-  </text>
   <!-- ANSI Color Swatches -->
   <g transform="translate(660, 742)">
     <rect x="0" width="11" height="11" rx="2" fill="#ff5f56" />
@@ -486,7 +477,7 @@ const fallbackSVG = renderTerminalCard(staticProfileData, true);
  * Generates the SVG string from live or provided data.
  */
 const profileSVG = async (
-  providedData?: UserProfile | null,
+  providedData?: UserProfile | null
 ): Promise<string> => {
   try {
     const data = providedData || (await fetchedData());
