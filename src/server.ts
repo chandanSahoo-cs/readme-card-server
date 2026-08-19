@@ -8,49 +8,47 @@ import {
   type UserProfile,
 } from "./lib/svg";
 
-let currentSVG: string | null = null;
+const app = express();
+const PORT = process.env.PORT || 3001;
+const INTERVAL_TIME = 1000 * 60; // 1 minute
+
+let currentSVG: string = fallbackSVG;
 let currentProfileData: UserProfile | null = null;
-const INTERVAL_TIME = 1000 * 60;
 
-(async () => {
-  console.log("Intial profile loaded at: ", new Date().toISOString());
-  const fetchProfileData = await fetchedData();
-  currentProfileData = fetchProfileData;
-  if (!fetchProfileData || Object.keys(fetchProfileData).length === 0) {
-    currentSVG = fallbackSVG;
-  } else {
-    currentSVG = await profileSVG();
-  }
-})();
-
-setInterval(async () => {
-  console.log("Running intervale at: ", Date.now());
+/**
+ * Updates cached profile data and SVG.
+ */
+async function refreshCard(): Promise<void> {
   try {
-    const fetchProfileData = await fetchedData();
-    if (
-      JSON.stringify(fetchProfileData) !== JSON.stringify(currentProfileData)
-    ) {
-      currentProfileData = fetchProfileData;
+    const freshData = await fetchedData();
+    if (!freshData || Object.keys(freshData).length === 0) {
+      currentSVG = fallbackSVG;
+      currentProfileData = null;
+      return;
+    }
+
+    if (JSON.stringify(freshData) !== JSON.stringify(currentProfileData)) {
+      currentProfileData = freshData;
+      // If profileSVG can accept data, pass freshData: await profileSVG(freshData)
       currentSVG = await profileSVG();
-      console.log("Profile refreshed at: ", new Date().toISOString());
+      console.log(`[${new Date().toISOString()}] Profile SVG updated.`);
     }
   } catch (error) {
-    console.log("Error in background worker :: ", error);
+    console.error("Error refreshing profile card:", error);
   }
-}, INTERVAL_TIME);
+}
 
-const app = express();
-
-app.get("/card", async (_req, res) => {
+// Routes
+app.get("/card", (_req, res) => {
   res.setHeader("Content-Type", "image/svg+xml");
   res.setHeader(
     "Cache-Control",
-    "public, max-age = 3600, stale-while-revalidate=60"
+    "public, max-age=3600, stale-while-revalidate=60"
   );
-  res.send(currentSVG);
+  res.send(currentSVG || fallbackSVG);
 });
 
-app.get("/health", async (_req, res) => {
+app.get(["/", "/health"], (_req, res) => {
   res.status(200).json({
     status: "ok",
     uptime: process.uptime(),
@@ -58,16 +56,14 @@ app.get("/health", async (_req, res) => {
   });
 });
 
-app.get("/", async (_req, res) => {
-  res.status(200).json({
-    status: "ok",
-    uptime: process.uptime(),
-    timestamp: Date.now(),
+// Bootstrap & Start Server
+(async () => {
+  console.log(`[${new Date().toISOString()}] Loading initial profile card...`);
+  await refreshCard();
+
+  const intervalId = setInterval(refreshCard, INTERVAL_TIME);
+
+  const server = app.listen(PORT, () => {
+    console.log(`Readme card server running at http://localhost:${PORT}`);
   });
-});
-
-const PORT = process.env.PORT || 3001;
-
-app.listen(PORT, () => {
-  console.log(`Readme card server is running at http://localhost:${PORT}`);
-});
+})();
